@@ -1,4 +1,4 @@
-# COVID-19-SinglePatch-Model
+# COVID-19-SinglePatch-model
 
 **Note:** This repository is currently under construction
 
