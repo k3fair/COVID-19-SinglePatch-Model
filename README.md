@@ -7,7 +7,7 @@ Simulation and visualization code for manuscript by Fair, Karatayev, Anand, and 
 
 To run a set of simulations or generate a figure, make all required option selections (detailed within each script) and launch the appropriate script.
 
-All data needed to run visualization script are included in the "InputFiles" folder. Expected runtime varies between scripts, but an individual simulation should run within 1 minute.
+All data needed to run visualization script are included in the "InputFiles" folder.
 
 **Scripts**
 
