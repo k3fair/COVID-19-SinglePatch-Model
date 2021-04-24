@@ -11,7 +11,7 @@ All data needed to run visualization scripts are included in the "InputFiles" fo
 
 All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data has a CC-BY-4.0 license (see DATA_LICENSE for details).
 
-**Scripts**
+## Scripts
 
 * covidHier0.35Lite_singlepatch_scenarios.R - runs simulations for different NPI scenarios, visualizes results and outputs figure
 
