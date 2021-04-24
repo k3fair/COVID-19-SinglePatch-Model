@@ -14,11 +14,11 @@ All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data ha
 
 * **covidHier0.35Lite_singlepatch_birthdeathexp.R** runs simulations for experiment on the impact of accounting for births/deaths and outputs results of these simulations
 
-* **COVIDviz_singlepatch_birthdeathexp.R** visualizes results from covidHier0.35Lite_singlepatch_birthdeathexp.R, outputs figure
+* **COVIDviz_singlepatch_birthdeathexp.R** visualizes results from covidHier0.35Lite_singlepatch_birthdeathexp.R and outputs figure
 
-* **covidHier0.35Lite_singlepatch_parametervary.R** runs simulations for experiment varying a single parameter at a time, outputs results of these simulations
+* **covidHier0.35Lite_singlepatch_parametervary.R** runs simulations for experiment varying a single parameter at a time and outputs results of these simulations
 
-* **COVIDviz_singlepatch_parametervary.R** visualizes results from covidHier0.35Lite_singlepatch_parametervary.R, outputs figure
+* **COVIDviz_singlepatch_parametervary.R** visualizes results from covidHier0.35Lite_singlepatch_parametervary.R and outputs figure
 
 
 ## Input Files
