@@ -7,7 +7,7 @@ Simulation and visualization code for manuscript by Fair, Karatayev, Anand, and 
 
 To run a set of simulations or generate a figure, make all required option selections (detailed within each script) and launch the appropriate script.
 
-All data needed to run visualization script are included in the "InputFiles" folder, except for inputs to COVIDviz_singlepatch_birthdeathexp.R, due to file size restrictions. These can be generated using covidHier0.35Lite_singlepatch_birthdeathexp.R.
+All data needed to run visualization scripts are included in the "InputFiles" folder, except for inputs to COVIDviz_singlepatch_birthdeathexp.R, due to file size restrictions. These can be generated using covidHier0.35Lite_singlepatch_birthdeathexp.R.
 
 All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data has a CC-BY-4.0 license (see DATA_LICENSE for details).
 
