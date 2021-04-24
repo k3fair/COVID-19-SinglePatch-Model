@@ -13,7 +13,7 @@ All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data ha
 
 **Scripts**
 
-* sim code runs runs simulations for experiment varying a single parameter at a time, outputs results of these simulations. 
+* **covidHier0.35Lite_singlepatch_scenarios.R**
 
 * vis code visualizes results of [add name of sim code]
 
