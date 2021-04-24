@@ -13,11 +13,15 @@ All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data ha
 
 **Scripts**
 
-* **covidHier0.35Lite_singlepatch_scenarios.R**
+* **covidHier0.35Lite_singlepatch_scenarios.R -**
 
-* vis code visualizes results of [add name of sim code]
+* **covidHier0.35Lite_singlepatch_birthdeathexp.R -**
 
-* Script that runs the single sim? and associated visualization?
+* **COVIDviz_singlepatch_birthdeathexp.R -**
+
+* **covidHier0.35Lite_singlepatch_parametervary.R -**
+
+* **COVIDviz_singlepatch_parametervary.R -""
 
 
 **Input Files**
