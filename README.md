@@ -21,7 +21,7 @@ All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data ha
 * **COVIDviz_singlepatch_parametervary.R** visualizes results from covidHier0.35Lite_singlepatch_parametervary.R and outputs figure
 
 
-## Input Files
+## Input files
 
 * **COVIDsim_CCS_fadeoutdat_X.R**, where X is a placeholder for the parameter being varied, contains data on fade-outs and infections from simulations generated using covidHier0.35Lite_singlepatch_parametervary.R
 
