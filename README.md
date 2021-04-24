@@ -24,20 +24,20 @@ All code has a GNU GPLv3 license (see CODE_LICENSE for details), and all data ha
 * COVIDviz_singlepatch_parametervary.R - visualizes results from covidHier0.35Lite_singlepatch_parametervary.R, outputs figure
 
 
-**Input Files**
+## Input Files
 
 * COVIDsim_CCS_fadeoutdat_X.R - where X is a placeholder for the parameter being varied, contains data on fade-outs and infections from simulations generated using covidHier0.35Lite_singlepatch_parametervary.R
 
 * COVIDsim_CCS_ccsdat_X.R - where X is a placeholder for the parameter being varied, contains data on critical community size values from simulations generated using covidHier0.35Lite_singlepatch_parametervary.R
 
 
-**System & hardware requirements**
+## System & hardware requirements
 
  * Windows 10 Pro Version 2004
 
  * Sufficient RAM to support storage of data structures during simulations
 
-**Installation guides**
+## Installation guides
 
 All software should install within a few minutes on a standard computer, the versions listed here are those the scripts have been tested on.
 
