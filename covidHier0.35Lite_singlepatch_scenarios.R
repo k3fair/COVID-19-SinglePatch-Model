@@ -17,8 +17,8 @@
 
 library(abind); library(fields); library(ggplot2); library(RColorBrewer); library(patchwork);library(dplyr);
 
-#Select the scenario you want to consider; moderate level of NPIs ("moderate"), high trigger prevalence ("hightrig"), low percieved risk ("lowomega"), high percieved risk ("highomega")
-scenario.select<-"highomega"
+#Select the scenario you want to consider; moderate level of NPIs ("moderate"), high trigger prevalence ("hightrig"), low percieved risk ("lowomega"), high percieved risk ("highomega"), no NPIs ("donothing"), long closures ("longclose")
+scenario.select<-"moderate"
 
 #Notes:
 # one parameter renamed here, we have xi=dlt
@@ -37,6 +37,7 @@ parms=cbind(N=rep(pop, samples),births=0.000051084, deaths=0.000020737, coviddea
 if (scenario.select=="hightrig") {parms[,"Tl"]<-2e-3;}
 if (scenario.select=="lowomega") {parms[,"omg"]<-4435.6;}
 if (scenario.select=="highomega") {parms[,"omg"]<-443560;}
+if (scenario.select=="donothing") {parms[, c("tauI")]<-0;}
 
 
 inCstart= parms[1,"Tl"]; #set initial trigger prevalence equal to dynamic trigger prevalence
@@ -44,6 +45,7 @@ inClen=30*3 #Duration of initial province closure
 Resurge=30 #Duration of additional closures 
 NP=ncol(parms)-nrow(parms)
 
+if (scenario.select=="longclose") {Resurge=120;}
 
 #Defining model state space. Tn, Tk, Da, and Di are all untested, tested, asymptomatics, and infecteds.
 #Nt tracks cumulative # positive cases (including those recovered)
@@ -250,8 +252,28 @@ p2<-ggplot(data=df, aes(x=ts, y=run)) +
   ylab("Realization") +
   scale_x_continuous(expand = c(0,0), breaks=c.breaks, labels=c.labels) +
   scale_y_continuous(expand = c(0,0)) +
-  scale_fill_manual("Closed?", values=c("dodgerblue3", "firebrick2"), labels=c("No", "Yes")) +
+  scale_fill_manual("Closed?", values=c("dodgerblue3", "firebrick2"), labels=c("No", "Yes"), drop=FALSE) +
   theme_bw()
+
+if (scenario.select=="donothing") {
+  p1<-ggplot(data=df, aes(x=ts, y=CN)) +
+    geom_line(aes(group=run), colour="dodgerblue3", alpha=transp) +
+    stat_summary(geom="line", fun=mean, colour="black", linetype="solid") +
+    xlab("Day") +
+    ylab("# New infections") +
+    scale_x_continuous(expand = c(0,0), breaks=seq(0,390,30)) +
+    theme_bw()
+  
+  p2<-ggplot(data=df, aes(x=ts, y=run)) +
+    geom_tile(aes(group=run, fill=factor((C+Ci)/parms[1,"eps"], levels=c("0", "1")))) +
+    xlab("Day") +
+    ylab("Realization") +
+    scale_x_continuous(expand = c(0,0), breaks=c.breaks, labels=c.labels) +
+    scale_y_continuous(expand = c(0,0)) +
+    scale_fill_manual("Closed?", values=c("dodgerblue3", "firebrick2"), labels=c("No", "Yes"), drop=FALSE) +
+    theme_bw()
+}
+
 
 p3<-ggplot(data=df, aes(x=ts, y=run)) +
   geom_tile(aes(group=run, fill=sick)) +
