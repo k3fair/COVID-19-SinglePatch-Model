@@ -1,6 +1,6 @@
 # COVID-19-SinglePatch-model
 
-Simulation and visualization code for manuscript by Fair, Karatayev, Anand, and Bauch (2021). Model of SARS-CoV-2 transmission used to explore how physical factors and human behavior impact the persistence of infectious diseases.
+Simulation and visualization code for manuscript by Fair, Karatayev, Anand, and Bauch (2021). Model of SARS-CoV-2 transmission used to explore how physical factors, human behavior, and non-pharmaceutical interventions (NPIs) impact the persistence of novel pathogens.
 
 To run a set of simulations or generate a figure, make all required option selections (detailed within each script) and launch the appropriate script.
 
