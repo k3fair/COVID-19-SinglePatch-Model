@@ -1,5 +1,4 @@
-#     covidHier48_Github_parmfit.R runs simulations for experiment on the impact of accounting 
-#     for births/deaths outputs results of these simulations.
+#     covidHier0.35Lite_singlepatch_birthdeathexp.R runs simulations for experiment on the impact of accounting for births/deaths outputs results of these simulations.
 #     Copyright (C) 2021  Kathyrn R Fair, Vadim A Karatayev
 #
 #     This program is free software: you can redistribute it and/or modify

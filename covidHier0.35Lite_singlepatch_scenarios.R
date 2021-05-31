@@ -1,17 +1,16 @@
-#     Script runs simulations for different NPI scenarios, visualizes 
-#     results and outputs figure.
+#     covidHier0.35Lite_singlepatch_scenarios.R runs simulations for NPI scenarios, visualizes results and outputs figure.
 #     Copyright (C) 2021  Kathyrn R Fair, Vadim A Karatayev
-# 
+#
 #     This program is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
 #     the Free Software Foundation, either version 3 of the License, or
 #     (at your option) any later version.
-# 
+#
 #     This program is distributed in the hope that it will be useful,
 #     but WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #     GNU General Public License for more details.
-# 
+#
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -42,7 +41,7 @@ if (scenario.select=="donothing") {parms[, c("tauI")]<-0;}
 
 inCstart= parms[1,"Tl"]; #set initial trigger prevalence equal to dynamic trigger prevalence
 inClen=30*3 #Duration of initial province closure
-Resurge=30 #Duration of additional closures 
+Resurge=30 #Duration of additional closures
 NP=ncol(parms)-nrow(parms)
 
 if (scenario.select=="longclose") {Resurge=120;}
@@ -54,14 +53,14 @@ Tn=c("A","SA","I","SI"); Tk=c("Ak","SAk","Ik","SIk"); Da=c("A","Ak","SA","SAk");
 
 
 #these functions handle all the state transitions. Input x is a matrix where 1st half of columns are source states and 2nd half are destination states
-gpTransB=function(x,Prs,seed,nc=ncol(x)){ 
+gpTransB=function(x,Prs,seed,nc=ncol(x)){
 	xvp=cbind(as.vector(x[,1:(nc/2)]),as.vector(Prs))
 	if(max(xvp[,1])==0) return(x);  #if no untested, nobody to move over to tested, quit
 	nz=(xvp[,1]*xvp[,2])>0; xvp[!nz,1]=0; #set any sample sizes where the prob is zero to zero so we don't need to run a binom for them
 	set.seed(seed); xvp[nz,1]=apply(matrix(xvp[nz,],ncol=2),1,function(y) rbinom(1,y[1],y[2]));#run binom to figure out transfers
 	return(x+matrix(c(-xvp[,1],xvp[,1]),ncol=nc))
 }
-#gpTrans is a simplified version where one transition probability for all states. 
+#gpTrans is a simplified version where one transition probability for all states.
 #If recovery=TRUE have individuals from 1st columns of x all transitioning into the last column
 gpTrans=function(x,Pr,seed,Recovery=FALSE, nc=ncol(x)){
 	xv=as.vector(x[,1:c(nc/2,nc-1)[1+Recovery]])
@@ -75,7 +74,7 @@ gpTrans=function(x,Pr,seed,Recovery=FALSE, nc=ncol(x)){
 reshfl2=function(x,M,seed,rs=TRUE,L=ncol(M),xnm=diag(x)){
   #if there's no one to transfer just leave as is, otherwise calc transport
 	set.seed(seed); if(max(x)>0) xnm[,x>0]=apply(matrix(rbind(x,M)[,x>0],nrow=L+1), 2, function(y) rmultinom(1,y[1],y[-1])); #use columns where top row is number in comparment, rows below are probs of staying in/leaving home patch
-	if(rs) return(rowSums(xnm)); return(xnm); 
+	if(rs) return(rowSums(xnm)); return(xnm);
 }
 
 #birth function, input total population and output additions to succeptibles
@@ -86,7 +85,7 @@ gpBirth=function(x,Pr,seed,nc=ncol(x)){
   #decides how many births to add to succeptible compartment for each patch
   xv[xv>0]=sapply(xv[xv>0], function(y) rbinom(1,y,Pr));
   #Add births to compartment in each patch
-  Tr=matrix(xv); return(Tr); 
+  Tr=matrix(xv); return(Tr);
 }
 
 #death function, input information on a compartment, outputs deaths for that compartment across patches
@@ -97,7 +96,7 @@ gpDeath=function(x,Pr,seed,nc=ncol(x)){
   #decides how many deaths to remove from compartment for each patch
   xv[xv>0]=sapply(xv[xv>0], function(y) rbinom(1,y,Pr));
   #Remove deaths from the compartment in each patch
-  Tr=matrix(xv); return(x-Tr); 
+  Tr=matrix(xv); return(x-Tr);
 }
 
 
@@ -120,24 +119,24 @@ m3iter=function(S,parms,seed,Ns=parms[,"N"]){
   S[,c("D")] = Ncurr - rowSums(S[,c("R","E",Da,Di, "S")]);
   #Count up number of people in each patch after biths and deaths, to use for thresholds, etc
   Ns=rowSums(S[,c("S","E",Da,Di,"R")])
-  
+
   S0k=S[,Tk]; #These are positive tests we already knew about (for individuals who are still alive)
 	#Then testing results come back
-	S[,c(Tn,Tk)]=gpTransB(S[,c(Tn,Tk)],as.vector(parms[,"tauI"]%*%t(c(parms[1,c("tauEAf","tauEAf")],1,1))),seed+3); 
+	S[,c(Tn,Tk)]=gpTransB(S[,c(Tn,Tk)],as.vector(parms[,"tauI"]%*%t(c(parms[1,c("tauEAf","tauEAf")],1,1))),seed+3);
 	#update cumulative total, and local active case prevalence based on our new testing
-	S[,"Nt"]=S[,"Nt"]+rowSums(S[,Tk]-S0k); pos=rowSums(S[,Tk])/Ns; 
-	
+	S[,"Nt"]=S[,"Nt"]+rowSums(S[,Tk]-S0k); pos=rowSums(S[,Tk])/Ns;
+
 	#Disease progression: pi is the fraction of people who never show symptoms (modeled implicitly)
-	pi=0.2; 
+	pi=0.2;
 	## Removal without death from I
-	S[,c(Di,"R")]=gpTrans(S[,c(Di,"R")],parms[1,"rho"]*(1-parms[1,"coviddeaths"]),seed,TRUE); 
+	S[,c(Di,"R")]=gpTrans(S[,c(Di,"R")],parms[1,"rho"]*(1-parms[1,"coviddeaths"]),seed,TRUE);
 	## Removal via death from I
-	S[,c(Di,"Rd")]=gpTrans(S[,c(Di,"Rd")],parms[1,"rho"]*parms[1,"coviddeaths"],seed,TRUE); 
+	S[,c(Di,"Rd")]=gpTrans(S[,c(Di,"Rd")],parms[1,"rho"]*parms[1,"coviddeaths"],seed,TRUE);
 	## All other transitions
-	S[,c(Da,"R")]=gpTrans(S[,c(Da,"R")],pi*prod(parms[1,c("sig","rho")]),seed,TRUE); 
-	S[,c(Da,Di)]=gpTrans(S[,c(Da,Di)],parms[1,"sig"]*(1-pi),seed+1); 
+	S[,c(Da,"R")]=gpTrans(S[,c(Da,"R")],pi*prod(parms[1,c("sig","rho")]),seed,TRUE);
+	S[,c(Da,Di)]=gpTrans(S[,c(Da,Di)],parms[1,"sig"]*(1-pi),seed+1);
 	S[,c("E","A")]=gpTrans(S[,c("E","A")],parms[1,"alpha"]*(1-parms[1,"s"]),seed+2); S[,c("E","SA")]=gpTrans(S[,c("E","SA")],parms[1,"alpha"]*parms[1,"s"],seed+2.5);
-  
+
 	#Closure decisions: C tracks # days dC since last closure (ie units 1/eps rather than integers).
   ### Replace dC, dCt with -1 to get rid of closures
   dC=round(S[,"C"]/parms[1,"eps"]);
@@ -145,16 +144,16 @@ m3iter=function(S,parms,seed,Ns=parms[,"N"]){
   past_init<-(dCt>=inClen); in_init <-((S[,"Nt"]/Ns >= inCstart & dCt==0) | (dCt<inClen & dCt>0));
 	decide= past_init & (dC==0 | dC>Resurge-1); #determines if we're past initial and any subesequent closures
   closed=parms[1,"eps"]*((pos > parms[,"Tl"]*decide & parms[,"Tl"]<1 & past_init==TRUE) | in_init | (pos==0 & decide==FALSE & parms[,"Tl"]<1 & past_init==TRUE));
-	S[,"C"]=S[,"C"]*(!decide)+(past_init*closed); 
-	S[,"Ci"]=in_init*closed; 
+	S[,"C"]=S[,"C"]*(!decide)+(past_init*closed);
+	S[,"Ci"]=in_init*closed;
 	S[,"Ct"]=S[,"Ct"] + closed;
 
 	### NOTE: right now the below travel stuff is OK because we have no travel and the initial matrix (which has static population size) which is being used for caculating travel proportions is using the initial static population size to do so --- we will need to fix this to incorporate dynamic pop size if we add travel back in
 	#Make modified travel matrices for people feeling sick and/or tested positive, then implement travel
 	M=Mc=parms[,-(1:NP)]; Mc=M[1:nrow(M),]*(1-closed); diag(Mc)=diag(Mc)+1-colSums(Mc); McA=abind(Mc,Mstay(Mc,parms[1,"eta"]),Mstay(Mc,parms[1,"r"]),Mstay(Mc,1-(1-parms[1,"eta"])*(1-parms[1,"r"])),along=3);
 	Ss=reshfl2(S[,"S"],Mc,seed+4,FALSE); Rearr=apply(rbind(seed+(5:14), c(1,1,1:2,1:2,3:4,3:4), S[,c("R","E",Da,Di)]), 2, function(x) reshfl2(x[-(1:2)],McA[,,x[2]],x[1]))
-  Pstar=rowSums(cbind(Ss,Rearr)); 
-	dlt=parms[1,"dlt"]; 
+  Pstar=rowSums(cbind(Ss,Rearr));
+	dlt=parms[1,"dlt"];
 	Pmod= dlt + (1-dlt)/Pstar;
 
 	#Baseline infection probability. The last term with rowSums is how many people end up in each county for the day.
@@ -163,18 +162,18 @@ m3iter=function(S,parms,seed,Ns=parms[,"N"]){
 	modK=1-parms[1,"eta"]; modS=1/parms[1,"s"]-1; modA=cbind(Infect,modK*Infect,modS*Infect,modS*modK*Infect);
 	Infects=1 - apply((1-cbind(modA,2*modA))^Rearr[,-(1:2)], 1, prod)
 	if (max(Infects)>1) print(max(Infects));
-	
+
 	#Implement infection and move susceptibles and newly exposeds back to home county
 	#Record all previously exposed
 	C0=S[,c("E")];
 	S[,c("S","E")]=cbind(0,S[,"E"]) + colSums(gpTransB(cbind(Ss,0*Ss),round(Infects,10),seed+15))
 	#Update with newly exposed
 	S[,"CN"]=S[,c("E")]-C0;
-	
+
 	return(S)
 }; FUN=m3iter
 
-closein=function(threshs,tsNt,tm){ 
+closein=function(threshs,tsNt,tm){
 #   #uncomment lines below to revert to initial closure in the style of Karateyev et al. (2020), right now this function doesn't do anything
 # 	if(max(tsNt)<inCstart) return(1+0*threshs) #Closures not yet started
 # 	if((tm-which(tsNt>=inCstart)[1])<inClen) return(0*threshs) #Initial closure started
@@ -188,15 +187,15 @@ closeinappl=function(parms,TS,tm=dim(TS)[3],delayInit=10){
 Resagg=function(TS,parms,plotgive=TRUE){  tmp=t(apply(TS,2:3,sum))/sum(parms[,"N"]); tmp2=cbind(tmp[,"R"],rowSums(tmp[,2:10])*1e2,rowSums(tmp[,Tk])*1000,tmp[,"C"]); if(plotgive) matplot(tmp2,type="l"); return(tmp2); }
 #Function to implement simulations. InitInf sets which stages the initially sick people are in, InitInf=2 default is all sick initially exposed
 msim3=function(FUN,parms,Trun=365,seed0=11,plotgive=FALSE,InitInf=c(2)){
-	L=nrow(parms); nI=length(InitInf); Ns=parms[,"N"]; 
+	L=nrow(parms); nI=length(InitInf); Ns=parms[,"N"];
 	#assign initial infections
 	set.seed(seed0); Infs=NI0=apply(parms[,c("N","n0")], 1, function(x) rbinom(n=nI,x[1],prob=x[2]/nI)); if(nI>1){ Infs=t(Infs); NI0=rowSums(Infs); };
-	
+
 	TS=array(0,dim=c(L,length(Snm),1)); TS[,c(1,InitInf),1]=cbind(Ns-NI0,Infs); TS[,13,1]=0; colnames(TS)=Snm; set.seed(seed0+2); Seed=rnorm(Trun,1e6,1e6);
 	Mn=round(parms[1,"Mfact"]*parms[,-(1:NP)]*(1-diag(L))); diag(Mn)=Ns-colSums(Mn); parms[,-(1:NP)]=Mn%*%diag(1/colSums(Mn));
-	
+
 	for(i in 2:Trun) TS=abind(TS,FUN(TS[,,i-1],closeinappl(parms,TS),seed=Seed[i]),along=3); TS[,"C",]=parms[1,"eps"]*(TS[,"C",]>0);
-	
+
 	#Different levels of aggregation in model output. plotgive=3 or 3.5 give shortest output form (tracking only infections and costs) in integer format to reduce output size
 	if(plotgive=="TS") return(TS); if(plotgive==TRUE) return(Resagg(TS,parms,plotgive==1));
 	if(plotgive%in%c(3,3.5)){ TS[,"C",]=TS[,"C",]*matrix(Ns,nrow(parms),Trun); TSn=apply(TS,c(2,3),sum); out=matrix(as.integer(TSn),nrow(TSn),ncol(TSn)); if(plotgive==3.5) return(out[c(1,13),]); return(rbind(out,colMeans(TS[,"C",]>0))); }
@@ -263,7 +262,7 @@ if (scenario.select=="donothing") {
     ylab("# New infections") +
     scale_x_continuous(expand = c(0,0), breaks=seq(0,390,30)) +
     theme_bw()
-  
+
   p2<-ggplot(data=df, aes(x=ts, y=run)) +
     geom_tile(aes(group=run, fill=factor((C+Ci)/parms[1,"eps"], levels=c("0", "1")))) +
     xlab("Day") +
