@@ -289,6 +289,6 @@ p.comb<-wrap_plots( wrap_plots(p3, p2, nrow=1), p1 + guides(colour=FALSE), nrow 
 
 print(p.comb)
 
-png(sprintf("COVIDsim_scenario_%s.png",scenario.select), width=20, height=10, units="cm", res=500)
+#png(sprintf("COVIDsim_scenario_%s.png",scenario.select), width=20, height=10, units="cm", res=500)
 print(p.comb)
 dev.off()
